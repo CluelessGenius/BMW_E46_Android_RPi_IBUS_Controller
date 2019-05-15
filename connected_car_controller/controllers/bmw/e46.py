@@ -10,7 +10,7 @@ import logging
 from controllers.base import BaseController
 
 from interfaces.ibus import IBUSInterface
-from interfaces.bt import BluetoothInterface
+from interfaces.keyboard import KeyboardInterface
 
 
 LOGGER = logging.getLogger(__name__)
@@ -23,12 +23,12 @@ class E46Controller(BaseController):
 
     def __init__(self):
         super(E46Controller, self).__init__()
-        self.bluetooth = BluetoothInterface(self)  # interface available for clients
+        self.keyboard = KeyboardInterface(self)  
         self.ibus = IBUSInterface(self)  # interface connected to the vehicle
 
         # bind interfaces to each other
-        self.bluetooth.bind_receive(self.ibus.send)
-        self.ibus.bind_receive(self.bluetooth.send)
+        # self.keyboard.bind_receive(self.ibus.send)
+        self.ibus.bind_receive(self.keyboard.send)
 
     def start(self):
         """Invoked when the controller is starting."""
@@ -36,7 +36,7 @@ class E46Controller(BaseController):
 
         # connect to the necessary interfaces
         self.ibus.connect()
-        self.bluetooth.connect()
+        # self.bluetooth.connect()
         self.state = self.__states__.STATE_RUNNING
         LOGGER.info('all services have been started')
 
@@ -48,5 +48,5 @@ class E46Controller(BaseController):
         LOGGER.info('ending the controller services...')
         self.state = self.__states__.STATE_STOPPED
         self.ibus.disconnect()
-        self.bluetooth.disconnect()
+        #self.bluetooth.disconnect()
 
